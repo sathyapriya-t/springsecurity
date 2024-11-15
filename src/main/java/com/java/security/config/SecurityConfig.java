@@ -19,6 +19,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
         /*
+
         //CSRF - Cross Site Request Forgery, this is an attack which tricks he te get access to the unwanted request.
         // Basically it will have same session id for all the request and stored in a cookie, which can be accessed to use dangerously.
         // So for that we need to make session id uniques for each request(Independent of user/client , seesion id should be unique).
@@ -39,6 +40,7 @@ public class SecurityConfig {
 
         //Creating the object
         return httpSecurity.build();
+
         */
 
         //This can also be writen like this
