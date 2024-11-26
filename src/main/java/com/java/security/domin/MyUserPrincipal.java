@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
-
+//User principal is used to represent the current user
 public class MyUserPrincipal implements UserDetails {
     private final Users users;
 
@@ -22,6 +22,7 @@ public class MyUserPrincipal implements UserDetails {
     @Override
     public String getPassword() {
         return users.getPassword();
+        //return encoder.encode(users.getPassword());
     }
 
     @Override

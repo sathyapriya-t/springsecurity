@@ -11,7 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 // EnableWebSecurity ->this annotation basically tells the spring leave the default config you have for spring security and use this.
@@ -23,10 +23,14 @@ public class SecurityConfig {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    //Authentication is basically done through authentication provider
+    //By default spring will have some authentication provider -> by creating this bean we are saying use this authentication not the default one
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
+        //provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
+        //Adding password encoder to protect the password while verifying -> if we didn't add it, we need to give the encrypted value as password
+        provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
         provider.setUserDetailsService(userDetailsService);
         return provider;
 

@@ -1,1 +1,1 @@
-INSERT into Users(user_id,username,password,role) VALUES (1,'sathya','s123','ADMIN'),(2,'Arun','a123','USER');
+--INSERT into Users(user_id,username,password,role) VALUES (1,'sathya','s123','ADMIN'),(2,'Arun','a123','USER');
