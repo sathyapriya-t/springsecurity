@@ -24,4 +24,9 @@ public class UserController {
         return userService.fetchUsers();
     }
 
+    @GetMapping("/login")
+    public String login(@RequestBody Users users){
+        return userService.verify(users);
+    }
+
 }
