@@ -21,7 +21,7 @@ import java.io.IOException;
 public class JWTFilter extends OncePerRequestFilter {
 
     @Autowired
-    JWTService jwtService;
+    private JWTService jwtService;
 
     @Autowired
     ApplicationContext context;
@@ -30,10 +30,16 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         //Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaGFsaW5pIiwiaWF0IjoxNzMyOTQzNTEwLCJleHAiOjE3MzI5NDM2MTh9.k1l-UCLqQkgRhp61FgJWQoPT83xPFZBwHTHX451oS-Y
         //01234567
+
+        //We need to specifically ignore the methods with no authorization it orelse this will get invoked even for all permitted also
+        String servletPath = request.getServletPath();
+        if (servletPath.equals("/login") || servletPath.equals("/register")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         String requestHeader = request.getHeader("Authorization");
         String token = null;
         String userName = null;
-
         if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
             token = requestHeader.substring(7);
             userName = jwtService.extractUserName(token);

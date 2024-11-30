@@ -16,6 +16,7 @@ public class UserController {
 
     @PostMapping("/register")
     public Users register(@RequestBody Users user){
+        System.out.println("coming here controller");
         return userService.register(user);
     }
 
@@ -26,6 +27,7 @@ public class UserController {
 
     @GetMapping("/login")
     public String login(@RequestBody Users users){
+        System.out.println("coming here controller");
         return userService.verify(users);
     }
 

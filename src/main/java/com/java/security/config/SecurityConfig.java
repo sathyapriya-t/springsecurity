@@ -10,7 +10,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,27 +27,10 @@ public class SecurityConfig {
 
     @Autowired
     private JWTFilter jwtFilter;
-    //Authentication is basically done through authentication provider
-    //By default spring will have some authentication provider -> by creating this bean we are saying use this authentication not the default one
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        //provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
-        //Adding password encoder to protect the password while verifying -> if we didn't add it, we need to give the encrypted value as password
-        provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
-        provider.setUserDetailsService(userDetailsService);
-        return provider;
 
-    }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
-
-    }
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         /*
 
@@ -72,17 +54,35 @@ public class SecurityConfig {
 
         //Creating the object
         return httpSecurity.build();
-
         */
-
-        //This can also be written like this
-        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
-                //Giving permission without authorization
-                .authorizeHttpRequests(request -> request.requestMatchers("register","login").permitAll()
-                        .anyRequest().authenticated())
-                .httpBasic(Customizer.withDefaults())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        return http.csrf(customizer -> customizer.disable()).
+                authorizeHttpRequests(request -> request
+                        .requestMatchers("/login", "/register").permitAll()
+                        .anyRequest().authenticated()).
+                httpBasic(Customizer.withDefaults()).
+                sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
+    //Authentication is basically done through authentication provider
+    //By default spring will have some authentication provider -> by creating this bean we are saying use this authentication not the default one
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        //provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
+        //Adding password encoder to protect the password while verifying -> if we didn't add it, we need to give the encrypted value as password
+        provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
+        provider.setUserDetailsService(userDetailsService);
+        return provider;
+
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+
+    }
+
+
 }
