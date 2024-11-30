@@ -15,6 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 // EnableWebSecurity ->this annotation basically tells the spring leave the default config you have for spring security and use this.
 // with this the basic form page will be disabled and what ever we are configuring down will work
@@ -25,6 +26,8 @@ public class SecurityConfig {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private JWTFilter jwtFilter;
     //Authentication is basically done through authentication provider
     //By default spring will have some authentication provider -> by creating this bean we are saying use this authentication not the default one
     @Bean
@@ -79,6 +82,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 }
