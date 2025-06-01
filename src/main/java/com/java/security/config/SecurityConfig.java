@@ -36,11 +36,21 @@ public class SecurityConfig {
     CustomAuthenticationEntryPoint authenticationEntryPoint;
 
 
+    //Authentication -> userDetailService
+    //Authorization -> SecurityFilterChain
+
+    //Role based authentication
+    //ROLE -> @preAuthorize(hasAnyRole('ADMIN','USER')) and role from userdetailservice should be same
+    //Authority -> @preAuthorize(hasAuthority('ROLE_ADMIN') and hasAuthority('USER')) and role from user detail service //"ROLE_ADMIN", "USER"
+    //Both should exactly match
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         /*
 
+        // CSRF -> should be disabled if you want the use post,put delete methods in postman (or) we have to get CSRF token and past in the nest post request header method which will returned in the header of the cookies in git method.
+        // Get is only allowed in postman without disabling it/or adding CSRF token
         //CSRF - Cross Site Request Forgery, this is an attack which tricks he te get access to the unwanted request.
         // Basically it will have same session id for all the request and stored in a cookie, which can be accessed to use dangerously.
         // So for that we need to make session id uniques for each request(Independent of user/client , seesion id should be unique).
